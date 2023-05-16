@@ -1,6 +1,5 @@
 import torch
-from beartype import beartype as typechecker
-from jaxtyping import Float, Int, jaxtyped
+from jaxtyping import Float, Int
 
 from ..distance.functional import eucledian_dist
 from .functional import find_closest_centroid, k_means
@@ -22,8 +21,6 @@ class KMeans:
         )
         self._fit_called = True
 
-    @jaxtyped
-    @typechecker
     def predict(
         self, X: Float[torch.Tensor, "batch features"]
     ) -> Int[torch.Tensor, "batch"]:
