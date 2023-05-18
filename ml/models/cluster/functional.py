@@ -2,7 +2,7 @@ import torch
 from beartype import beartype as typechecker
 from jaxtyping import Float, Int, jaxtyped
 
-from ..distance.functional import eucledian_dist
+from ...distance.functional import eucledian_dist
 
 __all__ = [
     "k_means",
