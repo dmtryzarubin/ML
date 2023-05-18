@@ -26,4 +26,3 @@ class Model(ABC):
 
     def parameters(self) -> List[torch.Tensor]:
         return self._parameters
-
