@@ -6,7 +6,13 @@ def identity(param, *args, **kwargs):
 
 
 def sgd(
-    param: torch.Tensor, grad: torch.Tensor, lr: float, *args, **kwargs
+    param: torch.Tensor,
+    grad: torch.Tensor,
+    lr: float,
+    weight_decay: float = 0.0,
+    *args,
+    **kwargs
 ) -> torch.Tensor:
-    param -= grad * lr
+    regularization = 2 * param.sum() * weight_decay
+    param -= lr * (grad + regularization)
     return param
