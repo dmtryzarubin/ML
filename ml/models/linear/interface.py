@@ -1,23 +1,30 @@
 from random import randint
-from typing import Any, List, Optional
+from typing import Any, Callable, List, Optional
 
 import torch
 from beartype import beartype as typechecker
 from jaxtyping import Float
 from tqdm.notebook import tqdm
 
+from ml.activations import identity
+
 from ... import losses
+from ...activations import identity, sigmoid
 from ...optim import Optimizer
 from ..base_model import Model
 from . import functional as F
 
-__all__ = ["Linear"]
+__all__ = ["Linear", "LinearRegression", "LogisticRegression"]
 
 
 class Linear(Model):
     @typechecker
     def __init__(
-        self, in_features: int, out_features: int, criterion: losses.Loss, **kwargs
+        self,
+        in_features: int,
+        out_features: int,
+        activation: Callable = identity,
+        **kwargs
     ) -> None:
         super().__init__()
         self.in_features = in_features
@@ -30,8 +37,7 @@ class Linear(Model):
 
         self._parameters = [self.weight, self.bias]
         self._grad = [self.d_weight, self.d_bias]
-
-        self.criterion = criterion
+        self.activation = activation
 
     def grad(self) -> List[torch.Tensor]:
         return self._grad
@@ -58,12 +64,13 @@ class Linear(Model):
         input: Float[torch.Tensor, "batch in_features"],
     ) -> Float[torch.Tensor, "batch out_features"]:
         super().predict()
-        return F.linear(input, *self._parameters)
+        return self.activation(F.linear(input, *self._parameters))
 
     def fit(
         self,
         input: Float[torch.Tensor, "batch in_features"],
         target: Float[torch.Tensor, "batch out_features"],
+        criterion: losses.Loss,
         optimizer: Optimizer,
         n_epochs: int = 100,
         verbose: bool = True,
@@ -73,9 +80,18 @@ class Linear(Model):
         for epoch in pbar:
             output = self.forward(input)
             optimizer.zero_grad()
-            loss, dout = self.criterion(output, target)
+            loss, dout = criterion(output, target)
             self.backward(dout)
             optimizer.step()
 
             self.history[epoch] = loss
         super().fit(input)
+
+
+class LogisticRegression(Linear):
+    def __init__(self, in_features: int, out_features: int, **kwargs) -> None:
+        super().__init__(in_features, out_features, sigmoid, **kwargs)
+
+
+class LinearRegression(Linear):
+    pass
