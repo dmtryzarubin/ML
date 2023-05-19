@@ -1,12 +1,18 @@
-from typing import Callable
+from typing import List
 
-from ml.models import linear
+import torch
+
 from ml.optim.functional import sgd
 
 from .base_optim import Optimizer
 
 
 class SGD(Optimizer):
-    def __init__(self, *args, **kwargs) -> None:
-        update_fn = sgd
-        super().__init__(*args, update_fn=update_fn, **kwargs)
+    def __init__(
+        self,
+        parameters: List[torch.Tensor],
+        grad: List[torch.Tensor],
+        lr: float,
+        **kwargs,
+    ) -> None:
+        super().__init__(parameters, grad, lr, update_fn=sgd, **kwargs)

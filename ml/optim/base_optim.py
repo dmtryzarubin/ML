@@ -12,14 +12,14 @@ class Optimizer(ABC):
     @abstractmethod
     def __init__(
         self,
-        paramters: List[torch.Tensor],
+        parameters: List[torch.Tensor],
         grad: List[torch.Tensor],
         lr: float,
         update_fn: Callable = identity,
         **kwargs,
     ) -> None:
         super().__init__()
-        self.parameters = paramters
+        self.parameters = parameters
         self.grad = grad
         self.lr = lr
         self.update_fn = update_fn
