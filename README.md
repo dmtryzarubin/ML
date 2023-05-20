@@ -4,13 +4,15 @@ Here is a repository containing implementations of various ML algorithms based o
 # Models:
 
 ## Classification:
-- [ ] Logistic Regression
+- [x] Logistic Regression
+- [x] MLP
 - [ ] Decesion Tree
 - [ ] Random Forest
 - [ ] Gradient Boosting on trees
 
 ## Regression:
 - [x] Linear Regression
+- [x] MLP
 
 ## Clusterization:
 - [x] K Means
@@ -18,7 +20,7 @@ Here is a repository containing implementations of various ML algorithms based o
 # Losses:
 
 ## Classification:
-- [ ] Binary Cross Entropy
+- [x] Binary Cross Entropy
 - [ ] Cross Entropy
 
 ## Regression:

@@ -6,10 +6,18 @@ __all__ = ["MSELoss", "MAELoss"]
 
 
 class MSELoss(Loss):
+    """
+    Mean squared error loss container
+    """
+
     def __init__(self, reduction: str = FM.DEFAULT_REDUCTION) -> None:
-        super().__init__("mse", reduction)
+        super().__init__(FM.mse, reduction)
 
 
 class MAELoss(Loss):
+    """
+    Mean absolute error loss container
+    """
+
     def __init__(self, reduction: str = FM.DEFAULT_REDUCTION) -> None:
-        super().__init__("mae", reduction)
+        super().__init__(FM.mae, reduction)
