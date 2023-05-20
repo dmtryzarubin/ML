@@ -7,6 +7,7 @@ import torch
 class Model(ABC):
     _fit_called: bool = False
 
+    @abstractmethod
     def __init__(self) -> None:
         super().__init__()
         self._parameters = []

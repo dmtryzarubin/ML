@@ -13,6 +13,7 @@ class SGD(Optimizer):
         parameters: List[torch.Tensor],
         grad: List[torch.Tensor],
         lr: float,
+        weight_decay: float,
         **kwargs,
     ) -> None:
-        super().__init__(parameters, grad, lr, update_fn=sgd, **kwargs)
+        super().__init__(parameters, grad, lr, weight_decay, update_fn=sgd, **kwargs)

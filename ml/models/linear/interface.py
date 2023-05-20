@@ -1,5 +1,4 @@
-from random import randint
-from typing import Any, Callable, List, Optional
+from typing import Callable, List
 
 import torch
 from beartype import beartype as typechecker
@@ -51,11 +50,11 @@ class Linear(Model):
     def __call__(
         self, input: Float[torch.Tensor, "batch in_features"]
     ) -> Float[torch.Tensor, "batch out_features"]:
-        output, self.cache = F._linear_forward(input, *self._parameters)
-        return output
+        return self.forward(input)
 
     def backward(self, dout: Float[torch.Tensor, "batch out_features"]) -> None:
-        grad = F._linear_backward(dout, self.cache)
+        d_input, d_weight, d_bias = F._linear_backward(dout, self.cache)
+        grad = [d_weight, d_bias]
         for i, g in enumerate(grad):
             self._grad[i] += g
 
@@ -64,7 +63,7 @@ class Linear(Model):
         input: Float[torch.Tensor, "batch in_features"],
     ) -> Float[torch.Tensor, "batch out_features"]:
         super().predict()
-        return self.activation(F.linear(input, *self._parameters))
+        return self.activation(self.forward(input))
 
     def fit(
         self,
