@@ -39,10 +39,12 @@ def _linear_backward(
     dout: Float[torch.Tensor, "batch out_features"],
     cache: Tuple[
         Float[torch.Tensor, "batch in_features"],
+        Float[torch.Tensor, "batch in_features"],
         Float[torch.Tensor, "out_features"],
     ],
 ):
     input, weight, bias = cache
+    d_input = dout @ weight
     d_weight = dout.T @ input
     d_bias = dout.sum(dim=0)
-    return d_weight, d_bias
+    return d_input, d_weight, d_bias
