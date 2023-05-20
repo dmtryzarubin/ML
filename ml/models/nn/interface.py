@@ -13,10 +13,20 @@ from ..linear.functional import _linear_backward
 
 
 class Sequential(Linear):
+    """
+    Container for stack of sequential linear layers and activations
+    """
+
     @typechecker
     def __init__(
         self, layers: List[Union[Linear, Activation]], activation: Callable
     ) -> None:
+        """
+        Container for stack of sequential linear layers and activations
+
+        :param layers: List of `Linear` and Activat
+        :param activation: Activation function that is used after a final layer on logits
+        """
         self.layers = layers
         self.activation = activation
         self._parameters = []
@@ -25,15 +35,14 @@ class Sequential(Linear):
             self._parameters += layer.parameters()
             self._grad += layer.grad()
 
-    def parameters(self):
-        return self._parameters
-
-    def grad(self):
-        return self._grad
-
     def forward(
         self, input: Float[torch.Tensor, "batch in_features"]
     ) -> Float[torch.Tensor, "batch out_features"]:
+        """
+        Performs forward pass for each layer and activation sequentially
+
+        :return: Output with shape `{batch, out_features_of_last_layer}`
+        """
         for linear in self.layers:
             output = linear.forward(input)
             input = output
@@ -42,6 +51,11 @@ class Sequential(Linear):
     def __call__(
         self, input: Float[torch.Tensor, "batch in_features"]
     ) -> Float[torch.Tensor, "batch out_features"]:
+        """
+        Performs forward pass for each layer and activation sequentially
+
+        :return: Output with shape `{batch, out_features_of_last_layer}`
+        """
         return self.forward(input)
 
     def predict(
