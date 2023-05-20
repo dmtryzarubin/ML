@@ -6,7 +6,7 @@ from jaxtyping import Bool, Float, Int, jaxtyped
 
 from .. import activations
 
-__all__ = ["mse", "mae", "r2_score", "get_stats"]
+__all__ = ["mse", "mae", "mape", "r2_score", "get_stats", "accuracy"]
 
 REDUCTIONS = {"mean", "none"}
 DEFAULT_REDUCTION = "mean"
@@ -76,6 +76,40 @@ def mae(
     if not return_grad:
         return value
     d_output = torch.sign(diff) / len(diff)
+    d_output /= diff.shape[1]
+    return value, d_output
+
+
+@jaxtyped
+@typechecker
+def mape(
+    output: Float[torch.Tensor, "batch out_features"],
+    target: Float[torch.Tensor, "batch out_features"],
+    reduction: str = DEFAULT_REDUCTION,
+    return_grad: bool = False,
+) -> Union[
+    Float[torch.Tensor, "..."],
+    Tuple[Float[torch.Tensor, "..."], Float[torch.Tensor, "batch out_features"]],
+]:
+    """
+    Computes Mean absolute percentage error
+    Also returns d mape / d output for backprop if `return_grad` is True
+
+    :return: Loss tensor due to reduction and optionally returns gradient
+    """
+    # L = |l - y| / y
+    # dL/dl = y^-1 * |l-y| = y^-1 * sign(l-y)
+    raise_for_reduction(reduction)
+    diff = output - target
+    eps = torch.tensor(torch.finfo(torch.float).eps)
+    abs_target = torch.maximum(torch.abs(target), eps)
+    value = torch.abs(diff) / abs_target
+    if reduction == "mean":
+        value = value.mean()
+    if not return_grad:
+        return value
+    d_output = torch.sign(diff) / abs_target
+    d_output /= len(diff)
     d_output /= diff.shape[1]
     return value, d_output
 

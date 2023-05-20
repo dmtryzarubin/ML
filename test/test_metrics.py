@@ -11,6 +11,7 @@ def test_metrics():
     comparisons = [
         ["mse", "mean_squared_error"],
         ["mae", "mean_absolute_error"],
+        ["mape", "mean_absolute_percentage_error"],
         ["r2_score", "r2_score"],
     ]
     reduction = "mean"
