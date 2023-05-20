@@ -26,7 +26,7 @@ Here is a repository containing implementations of various ML algorithms based o
 ## Regression:
 - [x] MSE
 - [x] MAE
-- [ ] MAPE
+- [x] MAPE
 
 ## Optimizers:
 - [x] SGD
