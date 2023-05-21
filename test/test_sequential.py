@@ -42,13 +42,14 @@ def __init_torch_linear(model: Sequential):
 def test_gradients():
     X, y = __create_data()
 
-    model = Sequential([Linear(2, 16), ReLU(), Linear(16, 1)], activation=sigmoid)
+    model = Sequential([Linear(2, 16), ReLU(), Linear(16, 1)])
+    torch_model = __init_torch_linear(model)
+
     criterion = BCELoss()
     output = model(X)
     loss, dout = criterion(output, y)
     model.backward(dout)
 
-    torch_model = __init_torch_linear(model)
     torch_output = torch_model(X)
     torch_loss = torch.nn.functional.binary_cross_entropy_with_logits(torch_output, y)
     torch_loss.backward()
@@ -58,5 +59,5 @@ def test_gradients():
 
     for t, l in zip(torch_model, model.layers):
         if isinstance(t, torch.nn.Linear) and isinstance(l, Linear):
-            assert torch.allclose(t.weight.data, l.weight.data)
-            assert torch.allclose(t.bias.data, l.bias.data)
+            assert torch.allclose(t.weight.grad, l._grad[0])
+            assert torch.allclose(t.bias.grad, l._grad[1])

@@ -5,7 +5,7 @@ from beartype import beartype as typechecker
 from jaxtyping import Float
 from tqdm.notebook import tqdm
 
-from ...activations import Activation
+from ...activations import Activation, identity
 from ...losses import Loss
 from ...optim import Optimizer
 from ..linear import Linear
@@ -19,7 +19,7 @@ class Sequential(Linear):
 
     @typechecker
     def __init__(
-        self, layers: List[Union[Linear, Activation]], activation: Callable
+        self, layers: List[Union[Linear, Activation]], activation: Callable = identity
     ) -> None:
         """
         Container for stack of sequential linear layers and activations
