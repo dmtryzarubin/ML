@@ -6,7 +6,16 @@ from jaxtyping import Bool, Float, Int, jaxtyped
 
 from .. import activations
 
-__all__ = ["mse", "mae", "mape", "r2_score", "get_stats", "accuracy"]
+__all__ = [
+    "mse",
+    "mae",
+    "mape",
+    "binary_cross_entropy_with_logits",
+    "cross_entropy_with_logits",
+    "r2_score",
+    "get_stats",
+    "accuracy",
+]
 
 REDUCTIONS = {"mean", "none"}
 DEFAULT_REDUCTION = "mean"
@@ -164,6 +173,38 @@ def binary_cross_entropy_with_logits(
     grad = probs - target
     grad /= len(output)
     grad /= output.shape[1]
+    return value, grad
+
+
+@jaxtyped
+@typechecker
+def cross_entropy_with_logits(
+    output: Float[torch.Tensor, "batch out_features"],
+    target: Int[torch.Tensor, "batch"],
+    dim: int = 1,
+    reduction: str = DEFAULT_REDUCTION,
+    return_grad: bool = False,
+) -> Union[
+    Float[torch.Tensor, "..."],
+    Tuple[Float[torch.Tensor, "..."], Float[torch.Tensor, "batch out_features"]],
+]:
+    """
+    Computes cross entropy from logits
+    Also returns d ce / d output for backprop if `return_grad` is True
+
+    :return: Loss tensor due to reduction and optionally returns gradient
+    """
+    raise_for_reduction(reduction)
+    probs = activations.softmax(output, dim=dim)
+    logprobs = probs.log()
+    value = -logprobs[range(len(probs)), target]
+    if reduction == "mean":
+        value = value.mean()
+    if not return_grad:
+        return value
+    grad = probs
+    grad[range(len(probs)), target] -= 1.0
+    grad /= len(output)
     return value, grad
 
 
