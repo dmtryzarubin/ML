@@ -32,7 +32,5 @@ class Optimizer(ABC):
 
     def step(self) -> None:
         for i, (param, grad) in enumerate(zip(self.parameters, self.grad)):
-            self.parameters[i] = self.update_fn(
-                param, grad, self.lr, self.weight_decay, self.n_steps
-            )
+            self.parameters[i] = self.update_fn(param, grad, self.lr, self.weight_decay)
         self.n_steps += 1
