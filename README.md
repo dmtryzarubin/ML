@@ -21,7 +21,7 @@ Here is a repository containing implementations of various ML algorithms based o
 
 ## Classification:
 - [x] Binary Cross Entropy
-- [ ] Cross Entropy
+- [x] Cross Entropy
 
 ## Regression:
 - [x] MSE
@@ -30,3 +30,4 @@ Here is a repository containing implementations of various ML algorithms based o
 
 ## Optimizers:
 - [x] SGD
+- [x] Adam
