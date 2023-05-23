@@ -5,11 +5,12 @@ from beartype import beartype as typechecker
 from jaxtyping import Float
 from tqdm.notebook import tqdm
 
-from ...activations import Activation, identity
+from ...activations import Activation, ReLU, Sigmoid, identity
 from ...losses import Loss
 from ...optim import Optimizer
 from ..linear import Linear
 from ..linear.functional import _linear_backward
+from .init import kaiming_normal, kaiming_uniform
 
 
 class Sequential(Linear):
@@ -19,7 +20,10 @@ class Sequential(Linear):
 
     @typechecker
     def __init__(
-        self, layers: List[Union[Linear, Activation]], activation: Callable = identity
+        self,
+        layers: List[Union[Linear, Activation]],
+        activation: Callable = identity,
+        init_fn: Callable = kaiming_normal,
     ) -> None:
         """
         Container for stack of sequential linear layers and activations
@@ -28,12 +32,24 @@ class Sequential(Linear):
         :param activation: Activation function that is used after a final layer on logits
         """
         self.layers = layers
+        self._init_weights(init_fn)
         self.activation = activation
         self._parameters = []
         self._grad = []
-        for layer in layers:
+        for layer in self.layers:
             self._parameters += layer.parameters()
             self._grad += layer.grad()
+
+    def _init_weights(self, init_fn):
+        for i, layer in enumerate(self.layers):
+            # assuming that we have a stack of [linear, non_linear, linear, ...., linear]
+            if isinstance(layer, Activation) and i < len(self.layers) - 1:
+                self.layers[i - 1].weight = init_fn(
+                    self.layers[i - 1].weight, layer._name
+                )
+                self.layers[i - 1].bias *= 0.0
+            if isinstance(layer, Linear) and i == len(self.layers) - 1:
+                self.layers[i].weight *= 0.01
 
     def forward(
         self, input: Float[torch.Tensor, "batch in_features"]
