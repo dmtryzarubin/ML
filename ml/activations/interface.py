@@ -33,6 +33,8 @@ class Sigmoid(Activation):
     Class for Sigmoid forward and backward pass
     """
 
+    _name = "sigmoid"
+
     def forward(self, input: Float[torch.Tensor, "..."]) -> Float[torch.Tensor, "..."]:
         self.cache = sigmoid(input)
         return self.cache
@@ -45,6 +47,8 @@ class ReLU(Activation):
     """
     Class for ReLU forward and backward pass
     """
+
+    _name = "relu"
 
     def forward(self, input: Float[torch.Tensor, "..."]) -> Float[torch.Tensor, "..."]:
         output = relu(input)
