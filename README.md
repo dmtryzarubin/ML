@@ -1,24 +1,16 @@
 # Machine Learning
-Here is a repository containing implementations of various ML algorithms based on `PyTorch`.
+Repository containing implementations of various ML algorithms.
 
 # Models:
-
-## Classification:
 - [x] Logistic Regression
+- [x] Linear Regression
 - [x] MLP
+- [x] K Means
 - [ ] Decesion Tree
 - [ ] Random Forest
 - [ ] Gradient Boosting on trees
 
-## Regression:
-- [x] Linear Regression
-- [x] MLP
-
-## Clusterization:
-- [x] K Means
-
 # Losses:
-
 ## Classification:
 - [x] Binary Cross Entropy
 - [x] Cross Entropy
@@ -28,6 +20,6 @@ Here is a repository containing implementations of various ML algorithms based o
 - [x] MAE
 - [x] MAPE
 
-## Optimizers:
+# Optimizers:
 - [x] SGD
 - [x] Adam
